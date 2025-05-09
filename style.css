@@ -1,0 +1,554 @@
+/* style.css */
+
+/* Basic body styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: transparent; /* Transparent background for frameless window */
+    color: #ffffff; /* Default text color */
+    overflow: hidden; /* Hide scrollbars on the body */
+}
+
+/* Styles specific to the frameless body */
+body.frameless {
+    /* Disable user selection in frameless mode */
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Styles for the custom titlebar */
+#titlebar {
+    height: 30px;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent black background */
+    position: fixed;
+    top: 0;
+    left: 0;
+    -webkit-app-region: drag; /* Makes the element draggable for window moving */
+    display: flex;
+    justify-content: flex-end; /* Align items to the right */
+    align-items: center;
+    padding: 0 10px;
+    box-sizing: border-box;
+    z-index: 10; /* Ensure it's above other content */
+}
+
+/* Styles for window control buttons within the titlebar */
+#window-controls button {
+    -webkit-app-region: no-drag; /* Prevent buttons from dragging the window */
+    background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent white */
+    border: none;
+    color: white;
+    padding: 3px 8px;
+    margin-left: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease; /* Smooth transition on hover */
+}
+
+#window-controls button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Specific margin for the settings button */
+#settings-btn {
+    margin-right: 10px;
+}
+
+/* Styles for both background elements (video and image) */
+#background-video,
+#background-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cover the entire container */
+    z-index: -1; /* Place behind other content */
+    /* Filter and opacity will be set by JavaScript */
+    /* Hide both by default, JS will add 'active' class to show the correct one */
+    display: none;
+}
+
+/* Style for when the background is active (applied by JS) */
+#background-video.active,
+#background-image.active {
+    display: block;
+}
+
+/* Styles for the main heading */
+h1 {
+    text-align: center;
+    color: #61dafb; /* Cyan-like color */
+    margin: 20px 0 30px 0;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Add text shadow for readability */
+}
+
+/* Styles for the welcome message element */
+#welcome-message {
+    text-align: center;
+    font-size: 1.5em;
+    color: #a0e862; /* Greenish color */
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Styles for the container holding dashboard content below the titlebar */
+.dashboard-content {
+    padding-top: 30px; /* Space for the fixed titlebar */
+    height: calc(100vh - 30px); /* Full height minus titlebar */
+    overflow-y: auto; /* Add vertical scroll if content exceeds height */
+    /* Custom scrollbar styles */
+    scrollbar-width: thin;
+    scrollbar-color: #61dafb #3a404c;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1; /* Ensure content is above background but below modals */
+}
+
+/* Webkit (Chrome/Safari) scrollbar styles */
+.dashboard-content::-webkit-scrollbar {
+    width: 8px;
+}
+.dashboard-content::-webkit-scrollbar-track {
+    background: #3a404c;
+    border-radius: 10px;
+}
+.dashboard-content::-webkit-scrollbar-thumb {
+    background-color: #61dafb;
+    border-radius: 10px;
+    border: 2px solid #3a404c;
+}
+
+/* Styles for the grid container holding the widgets */
+.dashboard-container {
+    display: grid;
+    /* Create columns that auto-fit, with a minimum width of 250px */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px; /* Gap between grid items (widgets) */
+    padding: 0 20px 20px 20px;
+    position: relative;
+    z-index: 1; /* Ensure widgets are above background */
+}
+
+/* Base styles for individual widget containers */
+.widget {
+    background-color: rgba(58, 64, 76, 0.85); /* Semi-transparent dark background */
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally by default */
+    text-align: center; /* Center text by default */
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    -webkit-app-region: no-drag; /* Prevent dragging window by widgets */
+    position: relative;
+}
+
+.widget:hover {
+    transform: translateY(-5px); /* Slightly raise on hover */
+    background-color: rgba(58, 64, 76, 0.98); /* Less transparent on hover */
+}
+
+/* Styles for the remove widget button (X) */
+.widget .remove-widget {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(255, 0, 0, 0.5); /* Semi-transparent red */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    -webkit-app-region: no-drag;
+    opacity: 0; /* Hidden by default */
+    pointer-events: none; /* Cannot be clicked when hidden */
+}
+
+/* Show the remove button on widget hover */
+.widget:hover .remove-widget {
+     opacity: 1;
+     pointer-events: auto; /* Make clickable on hover */
+}
+
+.widget .remove-widget:hover {
+    background-color: rgba(255, 0, 0, 0.8); /* Darker red on hover */
+}
+
+/* Styles for widget titles */
+.widget h2 {
+    margin-top: 0;
+    color: #f0f0f0;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+/* --- Widget Specific Styles --- */
+
+/* Clock Widget */
+.clock-widget #current-time {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #a0e862; /* Greenish color */
+    margin-bottom: 5px;
+}
+
+/* Date Widget */
+.date-widget #current-date {
+    font-size: 1.3em;
+    color: #e8a062; /* Orange-like color */
+}
+
+/* To-Do List Widget */
+.todo-widget {
+    text-align: left; /* Align text left */
+    align-items: flex-start; /* Align items to the start */
+}
+.todo-input-container {
+    display: flex;
+    width: 100%;
+    margin-bottom: 15px;
+}
+.todo-widget input[type="text"] {
+    flex-grow: 1;
+    padding: 8px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 4px;
+    background-color: #515a6a; /* Darker background */
+    color: #ffffff;
+    font-size: 1em;
+}
+.todo-widget button {
+    padding: 8px 12px;
+    background-color: #61dafb; /* Cyan-like color */
+    color: #282c34; /* Dark text */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
+    -webkit-app-region: no-drag;
+}
+.todo-widget button:hover {
+    background-color: #a0e862; /* Greenish hover */
+}
+.todo-widget ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    margin-top: 0;
+}
+.todo-widget li {
+    background-color: #4a515e; /* Slightly lighter background */
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between; /* Space out content and actions */
+    align-items: center;
+    word-break: break-word; /* Allow long words to break */
+    transition: background-color 0.2s ease;
+}
+.todo-widget li.completed {
+    text-decoration: line-through;
+    opacity: 0.7;
+    background-color: #515a6a; /* Darker background for completed items */
+}
+.todo-widget li span {
+    flex-grow: 1; /* Allow text to take available space */
+    margin-right: 10px;
+}
+.todo-widget li .todo-actions button {
+    padding: 4px 8px;
+    font-size: 0.8em;
+    margin-left: 5px;
+    -webkit-app-region: no-drag;
+}
+.todo-widget li .todo-actions .complete-btn {
+    background-color: #a0e862; /* Greenish */
+}
+.todo-widget li .todo-actions .complete-btn:hover {
+    background-color: #e8a062; /* Orange-like hover */
+}
+.todo-widget li .todo-actions .delete-btn {
+    background-color: #e86262; /* Reddish */
+}
+.todo-widget li .todo-actions .delete-btn:hover {
+    background-color: #ff0000; /* Bright red hover */
+}
+
+/* Weather Widget */
+.weather-widget #weather-info {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #61dafb; /* Cyan-like color */
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+.weather-widget #weather-details {
+    font-size: 1em;
+    color: #cccccc; /* Light gray */
+}
+
+/* Pomodoro Timer Widget */
+#pomodoro-timer {
+    font-size: 3.5em;
+    font-weight: bold;
+    color: #e86262; /* Reddish color */
+    margin-bottom: 15px;
+}
+.pomodoro-controls button {
+    margin: 0 5px;
+    -webkit-app-region: no-drag;
+}
+#pomodoro-status {
+    margin-top: 10px;
+    font-style: italic;
+    color: #cccccc;
+}
+/* Styles for different Pomodoro states */
+.pomodoro-widget.working #pomodoro-timer { color: #a0e862; } /* Greenish when working */
+.pomodoro-widget.breaking #pomodoro-timer { color: #e8a062; } /* Orange-like when on break */
+
+
+/* New: Clipboard Widget Styles */
+.clipboard-widget {
+     text-align: left;
+     align-items: flex-start;
+     word-break: break-word;
+}
+
+.clipboard-widget #clipboard-content {
+    font-size: 1em;
+    color: #f0f0f0;
+    margin-top: 10px;
+     white-space: pre-wrap; /* Preserve whitespace and wrap text */
+    /* Add max-height and overflow if you want a scrollable box */
+    /* max-height: 150px; */
+    /* overflow-y: auto; */
+    /* scrollbar-width: thin; */
+    /* scrollbar-color: #61dafb #3a404c; */
+}
+/* Webkit scrollbar for clipboard content if overflow is used */
+/* .clipboard-widget #clipboard-content::-webkit-scrollbar { width: 8px; } */
+/* .clipboard-widget #clipboard-content::-webkit-scrollbar-track { background: #515a6a; border-radius: 10px; } */
+/* .clipboard-widget #clipboard-content::-webkit-scrollbar-thumb { background-color: #61dafb; border-radius: 10px; border: 2px solid #515a6a; } */
+
+
+/* --- Modal Panel Styles (Settings and Add Widget) --- */
+
+/* Styles for the modal panels overlay */
+.settings-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Dark, semi-transparent overlay */
+    z-index: 20; /* Ensure it's above all other content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden; /* Hidden by default */
+    opacity: 0; /* Fully transparent by default */
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transition */
+}
+
+/* Style to make the panel visible */
+.settings-panel.visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Styles for the content box within the modal panel */
+.settings-content {
+    background-color: #3a404c; /* Dark background */
+    color: #f0f0f0; /* Light text */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    max-width: 500px; /* Max width of the content box */
+    width: 90%; /* Responsive width */
+    max-height: 90vh; /* Max height relative to viewport */
+    overflow-y: auto; /* Add vertical scroll if content exceeds height */
+    -webkit-app-region: no-drag; /* Prevent dragging window by the content */
+}
+
+/* Custom scrollbar styles for settings content */
+.settings-content::-webkit-scrollbar {
+    width: 8px;
+}
+.settings-content::-webkit-scrollbar-track {
+    background: #515a6a;
+    border-radius: 10px;
+}
+.settings-content::-webkit-scrollbar-thumb {
+    background-color: #61dafb;
+    border-radius: 10px;
+    border: 2px solid #515a6a;
+}
+
+/* Styles for the title within the settings content */
+.settings-content h2 {
+    text-align: center;
+    color: #61dafb;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+/* Styles for groups of settings */
+.setting-group {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #515a6a; /* Separator line */
+}
+
+.setting-group:last-child {
+    border-bottom: none; /* No separator after the last group */
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* Styles for setting group titles */
+.setting-group h3 {
+    color: #a0e862;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+/* Styles for labels in setting groups */
+.setting-group label {
+    display: block; /* Make labels take full width */
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+/* Styles for text inputs and select dropdowns in setting groups */
+.setting-group input[type="text"],
+.setting-group select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #515a6a;
+    border-radius: 4px;
+    background-color: #4a515e;
+    color: #ffffff;
+    font-size: 1em;
+    box-sizing: border-box; /* Include padding/border in element's total width */
+}
+
+/* Styles for range input (sliders) in setting groups */
+.setting-group input[type="range"] {
+    width: calc(100% - 40px); /* Make space for value display next to slider */
+    margin-bottom: 5px;
+    vertical-align: middle; /* Align vertically with text/span */
+}
+
+/* Styles for the span displaying slider values */
+.setting-group span {
+    display: inline-block;
+    width: 30px; /* Fixed width for value */
+    text-align: right; /* Align value to the right */
+    font-size: 0.9em;
+    color: #cccccc;
+    vertical-align: middle;
+}
+
+
+/* Styles for action buttons within the settings panel */
+.settings-actions {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 10px; /* Gap between buttons */
+    margin-top: 20px;
+}
+
+.settings-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
+}
+
+/* Specific style for the Save Settings button */
+#save-settings-btn {
+    background-color: #61dafb;
+    color: #282c34;
+}
+
+#save-settings-btn:hover {
+    background-color: #a0e862;
+}
+
+/* Specific style for Cancel buttons */
+#cancel-settings-btn, #cancel-add-widget-btn {
+    background-color: #515a6a;
+    color: #f0f0f0;
+}
+
+#cancel-settings-btn:hover, #cancel-add-widget-btn:hover {
+    background-color: #e86262;
+}
+
+/* Styles for the Add Widget floating button */
+#add-widget-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #61dafb;
+    color: #282c34;
+    font-size: 2em;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    z-index: 5; /* Ensure it's above widgets but below modals */
+    -webkit-app-region: no-drag;
+}
+
+#add-widget-btn:hover {
+    transform: scale(1.1); /* Slightly larger on hover */
+    background-color: #a0e862;
+}
+
+/* Styles specific to the Widget Selection Panel content */
+#widget-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#widget-list li {
+    background-color: #4a515e;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: center;
+    font-size: 1.1em;
+}
+
+#widget-list li:hover {
+    background-color: #515a6a;
+}
